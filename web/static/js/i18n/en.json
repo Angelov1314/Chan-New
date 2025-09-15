@@ -1,0 +1,28 @@
+{
+  "title_main": "Chan Theory Analysis",
+  "label_symbol": "Symbol",
+  "placeholder_symbol": "e.g., AAPL",
+  "label_timeframe": "Timeframe",
+  "btn_analyze": "Analyze",
+  "label_start_date": "Start Date",
+  "label_end_date": "End Date",
+  "loading_text": "Analyzing data, please wait...",
+  "section_analysis_results": "Analysis Results",
+  "section_accuracy_validation": "Accuracy Validation",
+  "label_validation_date": "Validation Date",
+  "btn_validate": "Validate Accuracy",
+  "btn_reset": "Analyze Again",
+  "section_usage": "How to Use",
+  "sub_analysis_features": "Analysis Features",
+  "sub_validation_features": "Validation Features",
+  "investment_index_label": "Investment Index",
+  "watchlist": "Watchlist",
+  "btn_add": "Add",
+  "btn_refresh": "Refresh",
+  "watchlist_empty": "No saved symbols yet",
+  "choose_to_analyze": "Click to analyze",
+  "lang_label": "Language",
+  "lang_zh": "中文",
+  "lang_en": "English"
+}
+

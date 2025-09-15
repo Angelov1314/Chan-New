@@ -1,0 +1,8 @@
+apple_id "your-apple-id@example.com" # Your Apple ID
+itc_team_id "YOUR_APP_STORE_CONNECT_TEAM_ID" # App Store Connect Team ID
+team_id "YOUR_DEV_TEAM_ID" # Developer Portal Team ID
+
+app_identifier "com.yourcompany.chananalyzer"
+itunes_connect_id "Chan Analyzer"
+
+

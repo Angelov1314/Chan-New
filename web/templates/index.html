@@ -17,14 +17,31 @@
                         <!-- 第一行：股票代码和时间框架 -->
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label for="symbol" class="form-label fw-bold">股票代码</label>
-                                <input type="text" class="form-control form-control-lg" id="symbol" placeholder="例如: AAPL" value="AAPL" required>
-                                <div class="form-text">请输入股票代码</div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label for="symbol" class="form-label fw-bold mb-0" data-i18n="label_symbol">股票代码</label>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <label class="form-label fw-bold mb-0" data-i18n="lang_label">语言</label>
+                                        <select id="langSwitcher" class="form-select form-select-sm" style="width:auto">
+                                            <option value="zh" data-i18n="lang_zh">中文</option>
+                                            <option value="en" data-i18n="lang_en">English</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                <input type="text" class="form-control form-control-lg" id="symbol" data-i18n="placeholder_symbol" placeholder="例如: AAPL" value="AAPL" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="addToWatchlistBtn" title="添加到收藏">
+                                        <i class="fas fa-star"></i>
+                                    </button>
+                                    <button class="btn btn-outline-info" type="button" id="showWatchlistBtn" title="查看收藏列表">
+                                        <i class="fas fa-list"></i>
+                                    </button>
+                                </div>
+                                <div class="form-text">请输入股票代码，或从收藏列表中选择</div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label for="timeframe" class="form-label fw-bold">时间框架</label>
+                                <label for="timeframe" class="form-label fw-bold" data-i18n="label_timeframe">时间框架</label>
                                 <select class="form-select form-select-lg" id="timeframe" required>
                                     <option value="1m">分线 (1分钟) - 最近7天</option>
                                     <option value="5m">5分钟 - 最近60天</option>
@@ -43,7 +60,7 @@
                                 <label class="form-label fw-bold">&nbsp;</label>
                                 <div>
                                     <button type="submit" class="btn btn-primary btn-lg w-100" id="analyzeBtn">
-                                        <i class="fas fa-search me-2"></i>开始分析
+                                        <i class="fas fa-search me-2"></i><span data-i18n="btn_analyze">开始分析</span>
                                     </button>
                                 </div>
                             </div>
@@ -52,13 +69,13 @@
                         <!-- 第二行：日期选择 -->
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="start_date" class="form-label fw-bold">开始日期</label>
+                                <label for="start_date" class="form-label fw-bold" data-i18n="label_start_date">开始日期</label>
                                 <input type="date" class="form-control form-control-lg" id="start_date" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="end_date" class="form-label fw-bold">结束日期</label>
+                                <label for="end_date" class="form-label fw-bold" data-i18n="label_end_date">结束日期</label>
                                 <input type="date" class="form-control form-control-lg" id="end_date" required>
                             </div>
                         </div>
@@ -75,9 +92,9 @@
         <div class="card">
             <div class="card-body text-center">
                 <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">分析中...</span>
+                    <span class="visually-hidden" data-i18n="loading_text">分析中...</span>
                 </div>
-                <p class="mt-3 mb-0">正在分析数据，请稍候...</p>
+                <p class="mt-3 mb-0" data-i18n="loading_text">正在分析数据，请稍候...</p>
             </div>
         </div>
     </div>
@@ -89,7 +106,7 @@
         <div class="card">
             <div class="card-header">
                 <h4 class="mb-0">
-                    <i class="fas fa-chart-line me-2"></i>分析结果
+                    <i class="fas fa-chart-line me-2"></i><span data-i18n="section_analysis_results">分析结果</span>
                     <span id="analysisInfo" class="badge bg-light text-dark ms-2"></span>
                 </h4>
             </div>
@@ -119,7 +136,7 @@
         <div class="card">
             <div class="card-header">
                 <h4 class="mb-0">
-                    <i class="fas fa-check-circle me-2"></i>准确性验证
+                    <i class="fas fa-check-circle me-2"></i><span data-i18n="section_accuracy_validation">准确性验证</span>
                 </h4>
             </div>
             <div class="card-body">
@@ -127,7 +144,7 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <div class="mb-3">
-                                <label for="validation_date" class="form-label fw-bold">验证日期</label>
+                                <label for="validation_date" class="form-label fw-bold" data-i18n="label_validation_date">验证日期</label>
                                 <input type="date" class="form-control form-control-lg" id="validation_date" required>
                                 <div class="form-text">选择要验证的截止日期</div>
                             </div>
@@ -137,7 +154,7 @@
                                 <label class="form-label fw-bold">&nbsp;</label>
                                 <div>
                                     <button type="submit" class="btn btn-success btn-lg w-100" id="validateBtn">
-                                        <i class="fas fa-check me-2"></i>验证准确性
+                                        <i class="fas fa-check me-2"></i><span data-i18n="btn_validate">验证准确性</span>
                                     </button>
                                 </div>
                             </div>
@@ -147,7 +164,7 @@
                                 <label class="form-label fw-bold">&nbsp;</label>
                                 <div>
                                     <button type="button" class="btn btn-secondary btn-lg w-100" id="resetBtn">
-                                        <i class="fas fa-refresh me-2"></i>重新分析
+                                        <i class="fas fa-refresh me-2"></i><span data-i18n="btn_reset">重新分析</span>
                                     </button>
                                 </div>
                             </div>
@@ -159,6 +176,49 @@
                 <div id="validationResults" style="display: none;">
                     <!-- 验证结果将在这里显示 -->
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Watchlist 模态框 -->
+<div class="modal fade" id="watchlistModal" tabindex="-1" aria-labelledby="watchlistModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="watchlistModalLabel">
+                    <i class="fas fa-star me-2"></i>股票收藏列表
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-8">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="newStockSymbol" placeholder="输入股票代码，如 AAPL">
+                            <button class="btn btn-primary" type="button" id="addNewStockBtn">
+                                <i class="fas fa-plus me-1"></i>添加
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-outline-secondary w-100" type="button" id="refreshWatchlistBtn">
+                            <i class="fas fa-sync-alt me-1"></i>刷新
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="watchlistContent">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">加载中...</span>
+                        </div>
+                        <p class="mt-2">正在加载收藏列表...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
             </div>
         </div>
     </div>
@@ -176,7 +236,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
-                        <h6><i class="fas fa-chart-candlestick me-2"></i>分析功能</h6>
+                        <h6><i class="fas fa-chart-candlestick me-2"></i><span data-i18n="sub_analysis_features">分析功能</span></h6>
                         <ul>
                             <li><strong>分型识别</strong>：自动识别顶分型和底分型</li>
                             <li><strong>笔构建</strong>：连接分型形成笔结构</li>
@@ -186,13 +246,24 @@
                         </ul>
                     </div>
                     <div class="col-md-6">
-                        <h6><i class="fas fa-check-circle me-2"></i>验证功能</h6>
+                        <h6><i class="fas fa-check-circle me-2"></i><span data-i18n="sub_validation_features">验证功能</span></h6>
                         <ul>
                             <li><strong>分型准确性</strong>：验证分型识别准确性</li>
                             <li><strong>笔准确性</strong>：验证笔构建准确性</li>
                             <li><strong>价格预测</strong>：验证价格预测准确性</li>
                             <li><strong>趋势预测</strong>：验证趋势预测准确性</li>
                             <li><strong>综合评分</strong>：整体分析质量评估</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h6><i class="fas fa-star me-2"></i>收藏功能</h6>
+                        <ul>
+                            <li><strong>快速添加</strong>：点击星号按钮将当前股票添加到收藏</li>
+                            <li><strong>收藏管理</strong>：点击列表按钮查看和管理收藏的股票</li>
+                            <li><strong>快速选择</strong>：从收藏列表中快速选择股票进行分析</li>
+                            <li><strong>持久保存</strong>：收藏列表在会话期间保持，刷新页面后重新加载</li>
                         </ul>
                     </div>
                 </div>
@@ -220,7 +291,203 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 页面加载时也自动调整日期范围
     adjustDateRangeForTimeframe();
+    
+    // 初始化watchlist功能
+    initializeWatchlist();
 });
+
+// Watchlist 功能
+let watchlistData = {
+    stocks: [],
+    lastUpdated: null
+};
+
+function initializeWatchlist() {
+    // 绑定事件监听器
+    document.getElementById('addToWatchlistBtn').addEventListener('click', addCurrentStockToWatchlist);
+    document.getElementById('showWatchlistBtn').addEventListener('click', showWatchlistModal);
+    document.getElementById('addNewStockBtn').addEventListener('click', addNewStockToWatchlist);
+    document.getElementById('refreshWatchlistBtn').addEventListener('click', loadWatchlist);
+    
+    // 页面加载时获取watchlist
+    loadWatchlist();
+}
+
+function addCurrentStockToWatchlist() {
+    const symbol = document.getElementById('symbol').value.trim().toUpperCase();
+    if (!symbol) {
+        alert('请先输入股票代码');
+        return;
+    }
+    
+    addStockToWatchlist(symbol);
+}
+
+function addNewStockToWatchlist() {
+    const symbol = document.getElementById('newStockSymbol').value.trim().toUpperCase();
+    if (!symbol) {
+        alert('请输入股票代码');
+        return;
+    }
+    
+    addStockToWatchlist(symbol);
+    document.getElementById('newStockSymbol').value = '';
+}
+
+function addStockToWatchlist(symbol) {
+    axios.post('/watchlist', { symbol: symbol })
+        .then(function(response) {
+            if (response.data.success) {
+                // 更新本地数据
+                watchlistData.stocks = response.data.stocks;
+                watchlistData.lastUpdated = response.data.last_updated;
+                
+                // 显示成功消息
+                showToast('success', response.data.message);
+                
+                // 更新UI
+                updateWatchlistUI();
+            } else {
+                showToast('error', response.data.error);
+            }
+        })
+        .catch(function(error) {
+            showToast('error', '添加失败: ' + error.message);
+        });
+}
+
+function removeStockFromWatchlist(symbol) {
+    axios.delete('/watchlist', { data: { symbol: symbol } })
+        .then(function(response) {
+            if (response.data.success) {
+                // 更新本地数据
+                watchlistData.stocks = response.data.stocks;
+                watchlistData.lastUpdated = response.data.last_updated;
+                
+                // 显示成功消息
+                showToast('success', response.data.message);
+                
+                // 更新UI
+                updateWatchlistUI();
+            } else {
+                showToast('error', response.data.error);
+            }
+        })
+        .catch(function(error) {
+            showToast('error', '移除失败: ' + error.message);
+        });
+}
+
+function loadWatchlist() {
+    axios.get('/watchlist')
+        .then(function(response) {
+            if (response.data.success) {
+                watchlistData.stocks = response.data.stocks;
+                watchlistData.lastUpdated = response.data.last_updated;
+                updateWatchlistUI();
+            } else {
+                showToast('error', '加载收藏列表失败');
+            }
+        })
+        .catch(function(error) {
+            showToast('error', '加载收藏列表失败: ' + error.message);
+        });
+}
+
+function updateWatchlistUI() {
+    const content = document.getElementById('watchlistContent');
+    
+    if (watchlistData.stocks.length === 0) {
+        content.innerHTML = `
+            <div class="text-center py-4">
+                <i class="fas fa-star fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">暂无收藏的股票</h5>
+                <p class="text-muted">添加一些股票到收藏列表，方便快速分析</p>
+            </div>
+        `;
+    } else {
+        const stocksHtml = watchlistData.stocks.map(stock => `
+            <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-1">${stock}</h6>
+                            <small class="text-muted">点击选择进行分析</small>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-sm btn-outline-primary" onclick="selectStock('${stock}')" title="选择此股票">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="removeStockFromWatchlist('${stock}')" title="从收藏中移除">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        
+        content.innerHTML = `
+            <div class="row">
+                ${stocksHtml}
+            </div>
+            ${watchlistData.lastUpdated ? `<small class="text-muted">最后更新: ${new Date(watchlistData.lastUpdated).toLocaleString()}</small>` : ''}
+        `;
+    }
+}
+
+function selectStock(symbol) {
+    document.getElementById('symbol').value = symbol;
+    // 关闭模态框
+    const modal = bootstrap.Modal.getInstance(document.getElementById('watchlistModal'));
+    if (modal) {
+        modal.hide();
+    }
+    showToast('info', `已选择 ${symbol}，可以开始分析`);
+}
+
+function showWatchlistModal() {
+    const modal = new bootstrap.Modal(document.getElementById('watchlistModal'));
+    modal.show();
+    loadWatchlist();
+}
+
+function showToast(type, message) {
+    // 创建toast元素
+    const toastHtml = `
+        <div class="toast align-items-center text-white bg-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info'} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>
+                    ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    `;
+    
+    // 添加到页面
+    let toastContainer = document.getElementById('toastContainer');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'toastContainer';
+        toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+        toastContainer.style.zIndex = '9999';
+        document.body.appendChild(toastContainer);
+    }
+    
+    toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+    
+    // 显示toast
+    const toastElement = toastContainer.lastElementChild;
+    const toast = new bootstrap.Toast(toastElement);
+    toast.show();
+    
+    // 自动移除toast元素
+    toastElement.addEventListener('hidden.bs.toast', function() {
+        toastElement.remove();
+    });
+}
 
 // 根据时间框架自动调整日期范围
 function adjustDateRangeForTimeframe() {
@@ -466,7 +733,7 @@ function displayTradingReport(tr)
     const block = (title, data) => `
         <div class="col-md-4">
             <div class="card">
-                <div class="card-header"><h6 class="mb-0">${title}（建议仓位：${(data?.position_pct ?? 0)}%）</h6></div>
+                <div class="card-header"><h6 class="mb-0">${title}（建议投资指数：${(data?.position_pct ?? 0)}%）</h6></div>
                 <div class="card-body">
                     <h6 class="text-success">买入信号</h6>
                     ${(data?.buy_signals ?? []).length ? '<ul>' + (data.buy_signals.map(s => `<li>$${s.position} · ${s.reason} · 止损 $${s.stop} · 目标 $${s.target}</li>`).join('')) + '</ul>' : '<p class="text-muted">无</p>'}
@@ -592,5 +859,17 @@ function displayValidationResults(accuracy) {
     validationResults.innerHTML = html;
     validationResults.style.display = 'block';
 }
+</script>
+<script>
+// 语言切换
+document.addEventListener('DOMContentLoaded', function(){
+    const sel = document.getElementById('langSwitcher');
+    if (sel && window.ChanI18n){
+        sel.value = ChanI18n.current();
+        sel.addEventListener('change', function(){
+            ChanI18n.setLang(sel.value);
+        });
+    }
+});
 </script>
 {% endblock %}

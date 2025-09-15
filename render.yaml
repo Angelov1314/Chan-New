@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: chan-analysis-web
+    env: python
+    plan: free
+    buildCommand: "pip install --upgrade pip && pip install -r web/requirements.txt"
+    startCommand: "gunicorn -w 4 -k gthread -b 0.0.0.0:$PORT web.app:app"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11
+      - key: PORT
+        value: 10000
+    autoDeploy: true
+
