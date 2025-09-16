@@ -1,0 +1,875 @@
+{% extends "base.html" %}
+
+{% block title %}缠论技术分析系统 - 主页{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="fas fa-chart-candlestick me-2"></i>缠论技术分析
+                </h4>
+            </div>
+            <div class="card-body">
+                <form id="analysisForm">
+                    <div class="row g-3">
+                        <!-- 第一行：股票代码和时间框架 -->
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label for="symbol" class="form-label fw-bold mb-0" data-i18n="label_symbol">股票代码</label>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <label class="form-label fw-bold mb-0" data-i18n="lang_label">语言</label>
+                                        <select id="langSwitcher" class="form-select form-select-sm" style="width:auto">
+                                            <option value="zh" data-i18n="lang_zh">中文</option>
+                                            <option value="en" data-i18n="lang_en">English</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="input-group">
+                                <input type="text" class="form-control form-control-lg" id="symbol" data-i18n="placeholder_symbol" placeholder="例如: AAPL" value="AAPL" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="addToWatchlistBtn" title="添加到收藏">
+                                        <i class="fas fa-star"></i>
+                                    </button>
+                                    <button class="btn btn-outline-info" type="button" id="showWatchlistBtn" title="查看收藏列表">
+                                        <i class="fas fa-list"></i>
+                                    </button>
+                                </div>
+                                <div class="form-text">请输入股票代码，或从收藏列表中选择</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="timeframe" class="form-label fw-bold" data-i18n="label_timeframe">时间框架</label>
+                                <select class="form-select form-select-lg" id="timeframe" required>
+                                    <option value="1m">分线 (1分钟) - 最近7天</option>
+                                    <option value="5m">5分钟 - 最近60天</option>
+                                    <option value="15m">15分钟 - 最近60天</option>
+                                    <option value="30m">30分钟 - 最近60天</option>
+                                    <option value="1h">小时线 - 最近60天</option>
+                                    <option value="1d" selected>日线 - 完整历史</option>
+                                    <option value="1wk">周线 - 完整历史</option>
+                                    <option value="1mo">月线 - 完整历史</option>
+                                </select>
+                                <div class="form-text">选择K线周期（日内数据仅限最近历史）</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">&nbsp;</label>
+                                <div>
+                                    <button type="submit" class="btn btn-primary btn-lg w-100" id="analyzeBtn">
+                                        <i class="fas fa-search me-2"></i><span data-i18n="btn_analyze">开始分析</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 第二行：日期选择 -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="start_date" class="form-label fw-bold" data-i18n="label_start_date">开始日期</label>
+                                <input type="date" class="form-control form-control-lg" id="start_date" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="end_date" class="form-label fw-bold" data-i18n="label_end_date">结束日期</label>
+                                <input type="date" class="form-control form-control-lg" id="end_date" required>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 加载状态 -->
+<div class="row mt-4 loading" id="loadingSection">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden" data-i18n="loading_text">分析中...</span>
+                </div>
+                <p class="mt-3 mb-0" data-i18n="loading_text">正在分析数据，请稍候...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 分析结果 -->
+<div class="row mt-4" id="resultsSection" style="display: none;">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="fas fa-chart-line me-2"></i><span data-i18n="section_analysis_results">分析结果</span>
+                    <span id="analysisInfo" class="badge bg-light text-dark ms-2"></span>
+                </h4>
+            </div>
+            <div class="card-body">
+                <!-- 缠论图表 -->
+                <div class="chart-container" id="chartContainer">
+                    <!-- 图表将在这里显示 -->
+                </div>
+                
+                <!-- 评估报告 -->
+                <div id="reportContainer">
+                    <!-- 报告将在这里显示 -->
+                </div>
+
+                <!-- 交易报告 -->
+                <div class="mt-4" id="tradingReportContainer">
+                    <!-- 交易报告将在这里显示 -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 准确性验证 -->
+<div class="row mt-4" id="validationSection" style="display: none;">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="fas fa-check-circle me-2"></i><span data-i18n="section_accuracy_validation">准确性验证</span>
+                </h4>
+            </div>
+            <div class="card-body">
+                <form id="validationForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="validation_date" class="form-label fw-bold" data-i18n="label_validation_date">验证日期</label>
+                                <input type="date" class="form-control form-control-lg" id="validation_date" required>
+                                <div class="form-text">选择要验证的截止日期</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">&nbsp;</label>
+                                <div>
+                                    <button type="submit" class="btn btn-success btn-lg w-100" id="validateBtn">
+                                        <i class="fas fa-check me-2"></i><span data-i18n="btn_validate">验证准确性</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">&nbsp;</label>
+                                <div>
+                                    <button type="button" class="btn btn-secondary btn-lg w-100" id="resetBtn">
+                                        <i class="fas fa-refresh me-2"></i><span data-i18n="btn_reset">重新分析</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                
+                <!-- 验证结果 -->
+                <div id="validationResults" style="display: none;">
+                    <!-- 验证结果将在这里显示 -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Watchlist 模态框 -->
+<div class="modal fade" id="watchlistModal" tabindex="-1" aria-labelledby="watchlistModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="watchlistModalLabel">
+                    <i class="fas fa-star me-2"></i>股票收藏列表
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-8">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="newStockSymbol" placeholder="输入股票代码，如 AAPL">
+                            <button class="btn btn-primary" type="button" id="addNewStockBtn">
+                                <i class="fas fa-plus me-1"></i>添加
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-outline-secondary w-100" type="button" id="refreshWatchlistBtn">
+                            <i class="fas fa-sync-alt me-1"></i>刷新
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="watchlistContent">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">加载中...</span>
+                        </div>
+                        <p class="mt-2">正在加载收藏列表...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 使用说明 -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="fas fa-info-circle me-2"></i>使用说明
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-chart-candlestick me-2"></i><span data-i18n="sub_analysis_features">分析功能</span></h6>
+                        <ul>
+                            <li><strong>分型识别</strong>：自动识别顶分型和底分型</li>
+                            <li><strong>笔构建</strong>：连接分型形成笔结构</li>
+                            <li><strong>线段分析</strong>：识别主要趋势线段</li>
+                            <li><strong>中枢检测</strong>：发现价格震荡区间</li>
+                            <li><strong>背驰分析</strong>：基于MACD的背驰信号</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6><i class="fas fa-check-circle me-2"></i><span data-i18n="sub_validation_features">验证功能</span></h6>
+                        <ul>
+                            <li><strong>分型准确性</strong>：验证分型识别准确性</li>
+                            <li><strong>笔准确性</strong>：验证笔构建准确性</li>
+                            <li><strong>价格预测</strong>：验证价格预测准确性</li>
+                            <li><strong>趋势预测</strong>：验证趋势预测准确性</li>
+                            <li><strong>综合评分</strong>：整体分析质量评估</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <h6><i class="fas fa-star me-2"></i>收藏功能</h6>
+                        <ul>
+                            <li><strong>快速添加</strong>：点击星号按钮将当前股票添加到收藏</li>
+                            <li><strong>收藏管理</strong>：点击列表按钮查看和管理收藏的股票</li>
+                            <li><strong>快速选择</strong>：从收藏列表中快速选择股票进行分析</li>
+                            <li><strong>持久保存</strong>：收藏列表在会话期间保持，刷新页面后重新加载</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// 设置默认日期
+document.addEventListener('DOMContentLoaded', function() {
+    const today = new Date();
+    const oneYearAgo = new Date(today.getFullYear() - 1, today.getMonth(), today.getDate());
+    
+    document.getElementById('start_date').value = oneYearAgo.toISOString().split('T')[0];
+    document.getElementById('end_date').value = today.toISOString().split('T')[0];
+    document.getElementById('validation_date').value = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    
+    // 监听时间框架变化，自动调整日期范围
+    document.getElementById('timeframe').addEventListener('change', function() {
+        adjustDateRangeForTimeframe();
+    });
+    
+    // 页面加载时也自动调整日期范围
+    adjustDateRangeForTimeframe();
+    
+    // 初始化watchlist功能
+    initializeWatchlist();
+});
+
+// Watchlist 功能
+let watchlistData = {
+    stocks: [],
+    lastUpdated: null
+};
+
+function initializeWatchlist() {
+    // 绑定事件监听器
+    document.getElementById('addToWatchlistBtn').addEventListener('click', addCurrentStockToWatchlist);
+    document.getElementById('showWatchlistBtn').addEventListener('click', showWatchlistModal);
+    document.getElementById('addNewStockBtn').addEventListener('click', addNewStockToWatchlist);
+    document.getElementById('refreshWatchlistBtn').addEventListener('click', loadWatchlist);
+    
+    // 页面加载时获取watchlist
+    loadWatchlist();
+}
+
+function addCurrentStockToWatchlist() {
+    const symbol = document.getElementById('symbol').value.trim().toUpperCase();
+    if (!symbol) {
+        alert('请先输入股票代码');
+        return;
+    }
+    
+    addStockToWatchlist(symbol);
+}
+
+function addNewStockToWatchlist() {
+    const symbol = document.getElementById('newStockSymbol').value.trim().toUpperCase();
+    if (!symbol) {
+        alert('请输入股票代码');
+        return;
+    }
+    
+    addStockToWatchlist(symbol);
+    document.getElementById('newStockSymbol').value = '';
+}
+
+function addStockToWatchlist(symbol) {
+    axios.post('/watchlist', { symbol: symbol })
+        .then(function(response) {
+            if (response.data.success) {
+                // 更新本地数据
+                watchlistData.stocks = response.data.stocks;
+                watchlistData.lastUpdated = response.data.last_updated;
+                
+                // 显示成功消息
+                showToast('success', response.data.message);
+                
+                // 更新UI
+                updateWatchlistUI();
+            } else {
+                showToast('error', response.data.error);
+            }
+        })
+        .catch(function(error) {
+            showToast('error', '添加失败: ' + error.message);
+        });
+}
+
+function removeStockFromWatchlist(symbol) {
+    axios.delete('/watchlist', { data: { symbol: symbol } })
+        .then(function(response) {
+            if (response.data.success) {
+                // 更新本地数据
+                watchlistData.stocks = response.data.stocks;
+                watchlistData.lastUpdated = response.data.last_updated;
+                
+                // 显示成功消息
+                showToast('success', response.data.message);
+                
+                // 更新UI
+                updateWatchlistUI();
+            } else {
+                showToast('error', response.data.error);
+            }
+        })
+        .catch(function(error) {
+            showToast('error', '移除失败: ' + error.message);
+        });
+}
+
+function loadWatchlist() {
+    axios.get('/watchlist')
+        .then(function(response) {
+            if (response.data.success) {
+                watchlistData.stocks = response.data.stocks;
+                watchlistData.lastUpdated = response.data.last_updated;
+                updateWatchlistUI();
+            } else {
+                showToast('error', '加载收藏列表失败');
+            }
+        })
+        .catch(function(error) {
+            showToast('error', '加载收藏列表失败: ' + error.message);
+        });
+}
+
+function updateWatchlistUI() {
+    const content = document.getElementById('watchlistContent');
+    
+    if (watchlistData.stocks.length === 0) {
+        content.innerHTML = `
+            <div class="text-center py-4">
+                <i class="fas fa-star fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">暂无收藏的股票</h5>
+                <p class="text-muted">添加一些股票到收藏列表，方便快速分析</p>
+            </div>
+        `;
+    } else {
+        const stocksHtml = watchlistData.stocks.map(stock => `
+            <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card h-100">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-1">${stock}</h6>
+                            <small class="text-muted">点击选择进行分析</small>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-sm btn-outline-primary" onclick="selectStock('${stock}')" title="选择此股票">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="removeStockFromWatchlist('${stock}')" title="从收藏中移除">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        
+        content.innerHTML = `
+            <div class="row">
+                ${stocksHtml}
+            </div>
+            ${watchlistData.lastUpdated ? `<small class="text-muted">最后更新: ${new Date(watchlistData.lastUpdated).toLocaleString()}</small>` : ''}
+        `;
+    }
+}
+
+function selectStock(symbol) {
+    document.getElementById('symbol').value = symbol;
+    // 关闭模态框
+    const modal = bootstrap.Modal.getInstance(document.getElementById('watchlistModal'));
+    if (modal) {
+        modal.hide();
+    }
+    showToast('info', `已选择 ${symbol}，可以开始分析`);
+}
+
+function showWatchlistModal() {
+    const modal = new bootstrap.Modal(document.getElementById('watchlistModal'));
+    modal.show();
+    loadWatchlist();
+}
+
+function showToast(type, message) {
+    // 创建toast元素
+    const toastHtml = `
+        <div class="toast align-items-center text-white bg-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info'} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>
+                    ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    `;
+    
+    // 添加到页面
+    let toastContainer = document.getElementById('toastContainer');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'toastContainer';
+        toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+        toastContainer.style.zIndex = '9999';
+        document.body.appendChild(toastContainer);
+    }
+    
+    toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+    
+    // 显示toast
+    const toastElement = toastContainer.lastElementChild;
+    const toast = new bootstrap.Toast(toastElement);
+    toast.show();
+    
+    // 自动移除toast元素
+    toastElement.addEventListener('hidden.bs.toast', function() {
+        toastElement.remove();
+    });
+}
+
+// 根据时间框架自动调整日期范围
+function adjustDateRangeForTimeframe() {
+    const timeframe = document.getElementById('timeframe').value;
+    const today = new Date();
+    const startDateInput = document.getElementById('start_date');
+    const endDateInput = document.getElementById('end_date');
+    
+    let maxDays = 365; // 默认一年
+    if (timeframe === '1m') maxDays = 7;
+    else if (['5m', '15m', '30m', '1h'].includes(timeframe)) maxDays = 60;
+    
+    const maxStartDate = new Date(today.getTime() - maxDays * 24 * 60 * 60 * 1000);
+    
+    // 对于日内数据，自动设置合适的日期范围
+    if (['1m', '5m', '15m', '30m', '1h'].includes(timeframe)) {
+        // 设置开始日期为最大允许的开始日期
+        startDateInput.value = maxStartDate.toISOString().split('T')[0];
+        // 设置结束日期为今天
+        endDateInput.value = today.toISOString().split('T')[0];
+    } else {
+        // 对于日线及以上，确保结束日期不超过今天
+        if (new Date(endDateInput.value) > today) {
+            endDateInput.value = today.toISOString().split('T')[0];
+        }
+        
+        // 如果开始日期超出限制，调整到最大允许的开始日期
+        const currentStartDate = new Date(startDateInput.value);
+        if (currentStartDate < maxStartDate) {
+            startDateInput.value = maxStartDate.toISOString().split('T')[0];
+        }
+    }
+}
+
+// 分析表单提交
+document.getElementById('analysisForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const symbol = document.getElementById('symbol').value.trim().toUpperCase();
+    const startDate = document.getElementById('start_date').value;
+    const endDate = document.getElementById('end_date').value;
+    const timeframe = document.getElementById('timeframe').value;
+    
+    if (!symbol || !startDate || !endDate || !timeframe) {
+        alert('请填写完整的股票代码、日期范围和时间框架');
+        return;
+    }
+    
+    // 检查日内数据的历史限制
+    const intradayTimeframes = ['1m', '5m', '15m', '30m', '1h'];
+    if (intradayTimeframes.includes(timeframe)) {
+        const startDateObj = new Date(startDate);
+        const endDateObj = new Date(endDate);
+        const daysDiff = Math.ceil((endDateObj - startDateObj) / (1000 * 60 * 60 * 24));
+        
+        let maxDays = 60;
+        if (timeframe === '1m') maxDays = 7;
+        
+        if (daysDiff > maxDays) {
+            alert(`警告：${timeframe}数据最多只能获取最近${maxDays}天的历史数据。请调整日期范围。`);
+            return;
+        }
+    }
+    
+    // 显示加载状态
+    document.getElementById('loadingSection').style.display = 'block';
+    document.getElementById('resultsSection').style.display = 'none';
+    document.getElementById('validationSection').style.display = 'none';
+    
+    // 发送分析请求
+    axios.post('/analyze', {
+        symbol: symbol,
+        start_date: startDate,
+        end_date: endDate,
+        timeframe: timeframe
+    })
+    .then(function(response) {
+        if (response.data.success) {
+            displayResults(response.data);
+        } else {
+            throw new Error(response.data.error || '分析失败');
+        }
+    })
+    .catch(function(error) {
+        alert('分析失败: ' + error.message);
+    })
+    .finally(function() {
+        document.getElementById('loadingSection').style.display = 'none';
+    });
+});
+
+// 验证表单提交
+document.getElementById('validationForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const symbol = document.getElementById('symbol').value.trim().toUpperCase();
+    const startDate = document.getElementById('start_date').value;
+    const endDate = document.getElementById('end_date').value;
+    const validationDate = document.getElementById('validation_date').value;
+    
+    if (!symbol || !startDate || !endDate || !validationDate) {
+        alert('请填写完整的参数');
+        return;
+    }
+    
+    // 发送验证请求
+    axios.post('/validate', {
+        symbol: symbol,
+        start_date: startDate,
+        end_date: endDate,
+        validation_date: validationDate
+    })
+    .then(function(response) {
+        if (response.data.success) {
+            displayValidationResults(response.data.accuracy);
+        } else {
+            throw new Error(response.data.error || '验证失败');
+        }
+    })
+    .catch(function(error) {
+        alert('验证失败: ' + error.message);
+    });
+});
+
+// 重置按钮
+document.getElementById('resetBtn').addEventListener('click', function() {
+    document.getElementById('resultsSection').style.display = 'none';
+    document.getElementById('validationSection').style.display = 'none';
+    document.getElementById('validationResults').style.display = 'none';
+});
+
+// 显示分析结果
+function displayResults(data) {
+    // 显示分析信息
+    document.getElementById('analysisInfo').textContent = `${data.symbol} - ${data.period}`;
+    
+    // 显示图表
+    const chartContainer = document.getElementById('chartContainer');
+    chartContainer.innerHTML = `<img src="${data.chart}" alt="缠论分析图表" class="img-fluid">`;
+    
+    // 显示报告
+    displayReport(data.report);
+    // 显示交易报告
+    displayTradingReport(data.report.trading_report);
+    
+    // 显示结果区域
+    document.getElementById('resultsSection').style.display = 'block';
+    document.getElementById('validationSection').style.display = 'block';
+}
+
+// 显示评估报告
+function displayReport(report) {
+    const reportContainer = document.getElementById('reportContainer');
+    
+    let html = `
+        <div class="row">
+            <div class="col-md-3">
+                <div class="metric-card">
+                    <div class="metric-value">${report.market_overview.current_price}</div>
+                    <div class="metric-label">当前价格</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metric-card">
+                    <div class="metric-value ${report.market_overview.price_change >= 0 ? 'text-success' : 'text-danger'}">${report.market_overview.price_change >= 0 ? '+' : ''}${report.market_overview.price_change_pct}%</div>
+                    <div class="metric-label">价格变化</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metric-card">
+                    <div class="metric-value">${report.fractal_analysis.total_fractals}</div>
+                    <div class="metric-label">总分型数</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metric-card">
+                    <div class="metric-value">${report.stroke_analysis.total_strokes}</div>
+                    <div class="metric-label">总笔数</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="report-section">
+                    <h5><i class="fas fa-chart-line me-2"></i>分型分析</h5>
+                    <p><strong>顶分型：</strong>${report.fractal_analysis.top_fractals}个</p>
+                    <p><strong>底分型：</strong>${report.fractal_analysis.bottom_fractals}个</p>
+                    <p><strong>最新分型：</strong>${report.fractal_analysis.latest_fractal.kind} - $${report.fractal_analysis.latest_fractal.price}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="report-section">
+                    <h5><i class="fas fa-chart-bar me-2"></i>笔分析</h5>
+                    <p><strong>上涨笔：</strong>${report.stroke_analysis.up_strokes}支</p>
+                    <p><strong>下跌笔：</strong>${report.stroke_analysis.down_strokes}支</p>
+                    <p><strong>当前笔：</strong>${report.stroke_analysis.current_stroke.direction}趋势</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="report-section">
+                    <h5><i class="fas fa-chart-area me-2"></i>线段分析</h5>
+                    <p><strong>上涨线段：</strong>${report.segment_analysis.up_segments}个</p>
+                    <p><strong>下跌线段：</strong>${report.segment_analysis.down_segments}个</p>
+                    <p><strong>当前线段：</strong>${report.segment_analysis.current_segment.direction} - $${report.segment_analysis.current_segment.low} - $${report.segment_analysis.current_segment.high}</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="report-section">
+                    <h5><i class="fas fa-chart-pie me-2"></i>中枢分析</h5>
+                    <p><strong>中枢数量：</strong>${report.zhongshu_analysis.total_zhongshus}个</p>
+                    <p><strong>当前中枢：</strong>$${report.zhongshu_analysis.current_zhongshu.lower} - $${report.zhongshu_analysis.current_zhongshu.upper}</p>
+                    <p><strong>中枢宽度：</strong>$${report.zhongshu_analysis.current_zhongshu.width}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="report-section">
+                    <h5><i class="fas fa-exclamation-triangle me-2"></i>背驰分析</h5>
+                    <p><strong>顶背驰：</strong>${report.divergence_analysis.bear_divergences}个</p>
+                    <p><strong>底背驰：</strong>${report.divergence_analysis.bull_divergences}个</p>
+                    <p><strong>最新背驰：</strong>${report.divergence_analysis.latest_divergence.type} - $${report.divergence_analysis.latest_divergence.price}</p>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    reportContainer.innerHTML = html;
+}
+
+// 显示交易报告（短/中/长线+仓位建议+风险与操作建议）
+function displayTradingReport(tr)
+{
+    const c = document.getElementById('tradingReportContainer');
+    if (!tr) { c.innerHTML = ''; return; }
+    const h = tr.horizon || {};
+
+    const block = (title, data) => `
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header"><h6 class="mb-0">${title}（建议投资指数：${(data?.position_pct ?? 0)}%）</h6></div>
+                <div class="card-body">
+                    <h6 class="text-success">买入信号</h6>
+                    ${(data?.buy_signals ?? []).length ? '<ul>' + (data.buy_signals.map(s => `<li>$${s.position} · ${s.reason} · 止损 $${s.stop} · 目标 $${s.target}</li>`).join('')) + '</ul>' : '<p class="text-muted">无</p>'}
+                    <h6 class="text-danger mt-3">卖出信号</h6>
+                    ${(data?.sell_signals ?? []).length ? '<ul>' + (data.sell_signals.map(s => `<li>$${s.position} · ${s.reason} · 止损 $${s.stop} · 目标 $${s.target}</li>`).join('')) + '</ul>' : '<p class="text-muted">无</p>'}
+                </div>
+            </div>
+        </div>`;
+
+    const html = `
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-hand-point-right me-2"></i>交易报告</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    ${block('短线', h.short)}
+                    ${block('中线', h.mid)}
+                    ${block('长线', h.long)}
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="alert alert-warning mb-0"><strong>风险等级：</strong>${tr.risk_level}</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="alert alert-info mb-0">
+                            <strong>操作建议：</strong>
+                            ${(tr.advice || []).map(a => `<span class="badge bg-secondary me-1">${a}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+
+    c.innerHTML = html;
+}
+
+// 显示验证结果
+function displayValidationResults(accuracy) {
+    const validationResults = document.getElementById('validationResults');
+
+    const metrics = accuracy.metrics || accuracy; // backward compatible
+    const chart = accuracy.chart || null;
+
+    const overallScore = metrics.overall_accuracy;
+    let scoreClass = 'accuracy-poor';
+    if (overallScore >= 80) scoreClass = 'accuracy-excellent';
+    else if (overallScore >= 70) scoreClass = 'accuracy-good';
+    else if (overallScore >= 60) scoreClass = 'accuracy-fair';
+    
+    let html = `
+        <div class="row mt-4">
+            <div class="col-12">
+                <h5><i class="fas fa-chart-line me-2"></i>准确性评估结果</h5>
+                <div class="text-center mb-4">
+                    <div class="accuracy-score ${scoreClass}">${overallScore}%</div>
+                    <p class="text-muted">总体准确性评分</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-3">
+                <div class="metric-card">
+                    <div class="metric-value">${metrics.fractal_accuracy}%</div>
+                    <div class="metric-label">分型准确性</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metric-card">
+                    <div class="metric-value">${metrics.stroke_accuracy}%</div>
+                    <div class="metric-label">笔准确性</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metric-card">
+                    <div class="metric-value">${metrics.price_accuracy}%</div>
+                    <div class="metric-label">价格预测</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="metric-card">
+                    <div class="metric-value">${metrics.trend_accuracy}%</div>
+                    <div class="metric-label">趋势预测</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">验证信息</h6>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>历史期间：</strong>${metrics.validation_info.historical_period}</p>
+                        <p><strong>验证期间：</strong>${metrics.validation_info.validation_period}</p>
+                        <p><strong>历史价格：</strong>$${metrics.validation_info.historical_price}</p>
+                        <p><strong>实际价格：</strong>$${metrics.validation_info.actual_price}</p>
+                        <p><strong>价格变化：</strong>$${metrics.validation_info.price_change}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        ${chart ? `
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">训练期与未来期对比图</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <img src="${chart}" alt="Validation Comparison" class="img-fluid" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>` : ''}
+    `;
+    
+    validationResults.innerHTML = html;
+    validationResults.style.display = 'block';
+}
+</script>
+<script>
+// 语言切换
+document.addEventListener('DOMContentLoaded', function(){
+    const sel = document.getElementById('langSwitcher');
+    if (sel && window.ChanI18n){
+        sel.value = ChanI18n.current();
+        sel.addEventListener('change', function(){
+            ChanI18n.setLang(sel.value);
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,23 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Build iOS app for App Store"
+  lane :build do
+    # Ensure cocoapods installed in the iOS project folder if needed
+    build_app(
+      workspace: "App.xcworkspace",
+      scheme: "App",
+      export_method: "app-store"
+    )
+  end
+
+  desc "Upload build to App Store Connect"
+  lane :upload do
+    upload_to_app_store(
+      skip_screenshots: true,
+      skip_metadata: true
+    )
+  end
+end
+
+

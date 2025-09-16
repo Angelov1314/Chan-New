@@ -1,0 +1,51 @@
+{
+  "project": {
+    "name": "缠论技术分析系统",
+    "version": "1.3.0",
+    "description": "基于缠论理论的技术分析工具",
+    "author": "缠论分析团队"
+  },
+  "data": {
+    "symbols": ["AAPL"],
+    "timeframes": ["1d", "1wk", "1mo"],
+    "date_range": {
+      "start": "2023-01-01",
+      "end": "2024-12-31"
+    }
+  },
+  "analysis": {
+    "fractal": {
+      "window": 3,
+      "min_gap": 2,
+      "strength_threshold": 0.02
+    },
+    "stroke": {
+      "min_bars": 3,
+      "min_swing_pct": 0.002,
+      "merge_threshold": 0.001
+    },
+    "segment": {
+      "min_strokes": 3,
+      "break_threshold": 0.005
+    },
+    "zhongshu": {
+      "min_strokes": 3,
+      "overlap_threshold": 0.001,
+      "merge_threshold": 5
+    },
+    "macd": {
+      "fast": 12,
+      "slow": 26,
+      "signal": 9
+    },
+    "divergence": {
+      "lookback": 2,
+      "threshold": 0.001
+    }
+  },
+  "output": {
+    "chart_dpi": 180,
+    "chart_size": [14, 7],
+    "report_format": "text"
+  }
+}

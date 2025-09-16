@@ -1,0 +1,21 @@
+{
+  "appId": "com.chananalysis.app",
+  "appName": "Chan Analysis",
+  "webDir": "www",
+  "server": {
+    "url": "https://chan-new.onrender.com",
+    "cleartext": false
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#ffffff",
+      "showSpinner": true,
+      "spinnerColor": "#999999"
+    },
+    "StatusBar": {
+      "style": "dark",
+      "backgroundColor": "#ffffff"
+    }
+  }
+}

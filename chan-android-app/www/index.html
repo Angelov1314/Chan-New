@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>缠论技术分析系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        
+        .logo {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            color: #666;
+        }
+        
+        .loading {
+            display: none;
+            margin-top: 20px;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">📈 缠论分析</div>
+        <div class="subtitle">专业的技术分析工具</div>
+        
+        <a href="https://chan-new.onrender.com/" class="btn" target="_blank">
+            🌐 打开Web版本
+        </a>
+        
+        <button class="btn" onclick="checkStatus()">
+            🔍 检查连接状态
+        </button>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>正在检查连接...</p>
+        </div>
+        
+        <div class="status" id="status">
+            点击上方按钮检查服务器连接状态
+        </div>
+    </div>
+
+    <script>
+        async function checkStatus() {
+            const loading = document.getElementById('loading');
+            const status = document.getElementById('status');
+            
+            loading.style.display = 'block';
+            status.style.display = 'none';
+            
+            try {
+                const response = await fetch('https://chan-new.onrender.com/', {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                
+                if (response.ok) {
+                    status.innerHTML = '✅ 服务器连接正常<br>可以正常使用所有功能';
+                    status.style.color = '#28a745';
+                } else {
+                    status.innerHTML = '⚠️ 服务器响应异常<br>请稍后重试';
+                    status.style.color = '#ffc107';
+                }
+            } catch (error) {
+                status.innerHTML = '❌ 无法连接到服务器<br>请检查网络连接';
+                status.style.color = '#dc3545';
+            }
+            
+            loading.style.display = 'none';
+            status.style.display = 'block';
+        }
+        
+        // 页面加载时自动检查状态
+        window.addEventListener('load', checkStatus);
+    </script>
+</body>
+</html>

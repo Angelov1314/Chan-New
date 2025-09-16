@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}新手手册 - 参数定义与显著性{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="fas fa-book me-2"></i>缠论参数定义与显著性（速览）</h4>
+            </div>
+            <div class="card-body">
+                <p class="text-muted">本页为初学者提供关键术语的简明解释及其在分析与交易中的重要性评估。示例参考最新报告结构（如 <code>reports/chan_analysis_report_20250909_123905.txt</code>）。</p>
+
+                <h5 class="mt-4">1. K线与基础数据</h5>
+                <ul>
+                    <li><strong>Open / High / Low / Close / Volume</strong>：基础价格与成交量。<em>显著性</em>：★★★★★（所有后续结构的基础）。</li>
+                    <li><strong>Date/Time</strong>：时间索引。<em>显著性</em>：★★★★★（分段、验证与趋势计算依赖）。</li>
+                </ul>
+
+                <h5 class="mt-4">2. 分型（Fractals）</h5>
+                <ul>
+                    <li><strong>Top/Bottom Fractal</strong>：局部极值，定义笔的端点。<em>显著性</em>：★★★★★。</li>
+                    <li><strong>Count / Balance / Density / Strength</strong>：数量、上下平衡、密度、强弱。<em>显著性</em>：★★★★。</li>
+                </ul>
+
+                <h5 class="mt-4">3. 笔（Strokes）</h5>
+                <ul>
+                    <li><strong>Direction</strong>（up/down）、<strong>Length</strong>（K数）、<strong>Swing</strong>（振幅）。<em>显著性</em>：★★★★★（趋势与线段的基础）。</li>
+                    <li><strong>Alternation</strong>：多空交替质量。<em>显著性</em>：★★★。</li>
+                </ul>
+
+                <h5 class="mt-4">4. 线段（Segments）</h5>
+                <ul>
+                    <li><strong>Direction/High/Low/Length</strong>：方向、高低边界与长度。<em>显著性</em>：★★★★★（中枢与交易框架核心）。</li>
+                    <li><strong>Balance/Strength</strong>：多空均衡、力度。<em>显著性</em>：★★★★。</li>
+                </ul>
+
+                <h5 class="mt-4">5. 中枢（Zhongshu）</h5>
+                <ul>
+                    <li><strong>Upper/Lower/Width/Length</strong>：上边、下边、宽度与持续时长。<em>显著性</em>：★★★★★（震荡/突破判定关键）。</li>
+                    <li><strong>Overlap</strong>：区间重叠度。<em>显著性</em>：★★★★。</li>
+                </ul>
+
+                <h5 class="mt-4">6. 背驰（Divergences, MACD 等）</h5>
+                <ul>
+                    <li><strong>Bullish/Bearish Divergence</strong>：底/顶背驰。<em>显著性</em>：★★★★★（拐点与风险控制重要依据）。</li>
+                    <li><strong>Count/Distribution</strong>：数量与分布位置。<em>显著性</em>：★★★★。</li>
+                </ul>
+
+                <h5 class="mt-4">7. 交易信号与风控</h5>
+                <ul>
+                    <li><strong>Buy/Sell Signals</strong>：依据背驰、中枢突破等生成。<em>显著性</em>：★★★★★（可操作结论）。</li>
+                    <li><strong>Stops/Targets</strong>：止损/目标。<em>显著性</em>：★★★★★（盈亏比与风控核心）。</li>
+                    <li><strong>Risk Level</strong>：风险分级。<em>显著性</em>：★★★★。</li>
+                    <li><strong>Investment Index</strong>：建议投资指数（短/中/长线）。<em>显著性</em>：★★★★★。</li>
+                </ul>
+
+                <h5 class="mt-4">8. 投资时间框架定义</h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-clock me-2"></i>短线投资</h6>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>时间范围：</strong>1-5个交易日</p>
+                                <p><strong>特点：</strong>基于最近10%K线内的背驰信号，适合日内或短期交易</p>
+                                <p><strong>适用：</strong>高频交易者、短线投机者</p>
+                                <p><strong>风险：</strong>较高，需要密切监控市场变化</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-calendar-week me-2"></i>中线投资</h6>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>时间范围：</strong>1-4周</p>
+                                <p><strong>特点：</strong>基于最近30%K线内的背驰信号，平衡风险与收益</p>
+                                <p><strong>适用：</strong>波段交易者、中期投资者</p>
+                                <p><strong>风险：</strong>中等，需要定期评估市场趋势</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>长线投资</h6>
+                            </div>
+                            <div class="card-body">
+                                <p><strong>时间范围：</strong>1-6个月或更长</p>
+                                <p><strong>特点：</strong>结合最后线段与中枢方向，关注主要趋势变化</p>
+                                <p><strong>适用：</strong>价值投资者、长期持有者</p>
+                                <p><strong>风险：</strong>相对较低，但需要耐心等待机会</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h5 class="mt-4">9. 准确性与验证</h5>
+                <ul>
+                    <li><strong>Fractal/Stroke Accuracy</strong>：结构一致性。<em>显著性</em>：★★★★。</li>
+                    <li><strong>Price/Trend Accuracy</strong>：价格与方向一致性。<em>显著性</em>：★★★★。</li>
+                    <li><strong>Validation Chart</strong>：训练-未来对比可视化。<em>显著性</em>：★★★★。</li>
+                </ul>
+
+                <div class="alert alert-info mt-4">
+                    <strong>提示：</strong> 参数显著性会随标的波动性、样本区间与级别变化而调整。实际交易需结合仓位管理与止损策略。
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

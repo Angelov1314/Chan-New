@@ -1,0 +1,28 @@
+{
+  "title_main": "缠论技术分析",
+  "label_symbol": "股票代码",
+  "placeholder_symbol": "例如: AAPL",
+  "label_timeframe": "时间框架",
+  "btn_analyze": "开始分析",
+  "label_start_date": "开始日期",
+  "label_end_date": "结束日期",
+  "loading_text": "正在分析数据，请稍候...",
+  "section_analysis_results": "分析结果",
+  "section_accuracy_validation": "准确性验证",
+  "label_validation_date": "验证日期",
+  "btn_validate": "验证准确性",
+  "btn_reset": "重新分析",
+  "section_usage": "使用说明",
+  "sub_analysis_features": "分析功能",
+  "sub_validation_features": "验证功能",
+  "investment_index_label": "建议投资指数",
+  "watchlist": "收藏列表",
+  "btn_add": "添加",
+  "btn_refresh": "刷新",
+  "watchlist_empty": "暂无收藏的股票",
+  "choose_to_analyze": "点击选择进行分析",
+  "lang_label": "语言",
+  "lang_zh": "中文",
+  "lang_en": "English"
+}
+

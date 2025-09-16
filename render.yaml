@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: chan-analysis-web
+    env: docker
+    plan: free
+    autoDeploy: true
+
