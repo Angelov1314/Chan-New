@@ -68,8 +68,18 @@ class ChanWebAnalyzer:
             start_dt = tz.localize(dt.strptime(start_date, '%Y-%m-%d'))
             end_dt = tz.localize(dt.strptime(end_date, '%Y-%m-%d'))
             
+            # 检测是否在Render环境
+            import os
+            is_render = os.environ.get('RENDER', False)
+            
             ticker = yf.Ticker(symbol)
-            data = yf.download(symbol, start=start_dt, end=end_dt, interval=timeframe, auto_adjust=True)
+            if is_render:
+                # Render环境：使用字符串日期避免时区问题
+                data = yf.download(symbol, start=start_date, end=end_date, interval=timeframe, 
+                                 auto_adjust=True, progress=False, show_errors=False)
+            else:
+                # 本地环境：使用时区处理
+                data = yf.download(symbol, start=start_dt, end=end_dt, interval=timeframe, auto_adjust=True)
             
             if data.empty:
                 # 根据时间框架提供更具体的错误信息
