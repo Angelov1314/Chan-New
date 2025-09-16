@@ -60,6 +60,7 @@ class ChanWebAnalyzer:
     def download_stock_data(self, symbol, start_date, end_date, timeframe="1d"):
         """下载股票数据"""
         try:
+            import pytz
             ticker = yf.Ticker(symbol)
             data = yf.download(symbol, start=start_date, end=end_date, interval=timeframe)
             
@@ -70,6 +71,12 @@ class ChanWebAnalyzer:
                     return None, f"无法获取{timeframe}数据。日内数据最多只能获取最近{max_days}天的历史数据，请调整日期范围。"
                 else:
                     return None, "无法获取股票数据，请检查股票代码或日期范围"
+            
+            # 添加时区处理
+            if not data.empty and hasattr(data.index, 'tz'):
+                if data.index.tz is None:
+                    data.index = data.index.tz_localize('UTC')
+                data.index = data.index.tz_convert('US/Eastern')
             
             # 数据清理和格式化
             data_clean = data.copy()

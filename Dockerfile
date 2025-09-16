@@ -4,14 +4,19 @@ FROM python:3.11.9-slim
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV MPLBACKEND=Agg
+ENV TZ=UTC
 
 # Set work directory
 WORKDIR /app
 
-# Install system dependencies (minimal)
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     gcc \
+    tzdata \
     && rm -rf /var/lib/apt/lists/*
+
+# Set timezone
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Copy requirements and install Python dependencies
 COPY web/requirements.txt .
