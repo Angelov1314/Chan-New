@@ -75,8 +75,10 @@ class ChanWebAnalyzer:
             ticker = yf.Ticker(symbol)
             if is_render:
                 # Render环境：使用字符串日期避免时区问题
+                import logging
+                logging.getLogger('yfinance').setLevel(logging.CRITICAL)
                 data = yf.download(symbol, start=start_date, end=end_date, interval=timeframe, 
-                                 auto_adjust=True, progress=False, show_errors=False)
+                                 auto_adjust=True, progress=False)
             else:
                 # 本地环境：使用时区处理
                 data = yf.download(symbol, start=start_dt, end=end_dt, interval=timeframe, auto_adjust=True)
