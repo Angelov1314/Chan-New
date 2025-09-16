@@ -17,6 +17,7 @@ COPY . .
 
 # Render will inject PORT; bind to it
 EXPOSE 8080
-CMD ["gunicorn", "-w", "4", "-k", "gthread", "-b", "0.0.0.0:${PORT}", "web.app:app"]
+# Use sh -c so $PORT is expanded at runtime; default to 8080 if not set
+CMD ["sh", "-c", "exec gunicorn -w 4 -k gthread -b 0.0.0.0:${PORT:-8080} web.app:app"]
 
 
