@@ -73,18 +73,14 @@ class ChanWebAnalyzer:
             is_render = os.environ.get('RENDER', False)
             
             ticker = yf.Ticker(symbol)
-            if is_render:
-                # Render环境：使用字符串日期避免时区问题
-                import logging
-                logging.getLogger('yfinance').setLevel(logging.CRITICAL)
-                print(f"DEBUG: Render环境下载数据 - 股票: {symbol}, 开始: {start_date}, 结束: {end_date}, 间隔: {timeframe}")
-                data = yf.download(symbol, start=start_date, end=end_date, interval=timeframe, 
-                                 auto_adjust=True, progress=False)
-                print(f"DEBUG: yfinance.download返回数据形状: {data.shape}")
-                print(f"DEBUG: 数据列名: {list(data.columns) if not data.empty else 'Empty'}")
-            else:
-                # 本地环境：使用时区处理
-                data = yf.download(symbol, start=start_dt, end=end_dt, interval=timeframe, auto_adjust=True)
+            # 统一使用字符串日期，避免时区问题
+            import logging
+            logging.getLogger('yfinance').setLevel(logging.CRITICAL)
+            print(f"DEBUG: 下载数据 - 股票: {symbol}, 开始: {start_date}, 结束: {end_date}, 间隔: {timeframe}")
+            data = yf.download(symbol, start=start_date, end=end_date, interval=timeframe, 
+                             auto_adjust=True, progress=False)
+            print(f"DEBUG: yfinance.download返回数据形状: {data.shape}")
+            print(f"DEBUG: 数据列名: {list(data.columns) if not data.empty else 'Empty'}")
             
             if data.empty:
                 # 根据时间框架提供更具体的错误信息
