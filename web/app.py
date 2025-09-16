@@ -1322,16 +1322,23 @@ def analyze():
         start_date = data.get('start_date', '')
         end_date = data.get('end_date', '')
         
+        print(f"DEBUG: 收到分析请求 - 股票: {symbol}, 开始: {start_date}, 结束: {end_date}")
+        
         if not symbol or not start_date or not end_date:
             return jsonify({'error': '请填写完整的股票代码和日期范围'}), 400
         
         # 获取时间框架参数
         timeframe = data.get('timeframe', '1d')
+        print(f"DEBUG: 时间框架: {timeframe}")
         
         # 下载数据
+        print("DEBUG: 开始下载数据...")
         df, error = analyzer.download_stock_data(symbol, start_date, end_date, timeframe)
         if error:
+            print(f"DEBUG: 数据下载失败: {error}")
             return jsonify({'error': error}), 400
+        
+        print(f"DEBUG: 数据下载成功，数据形状: {df.shape if df is not None else 'None'}")
         
         # 执行分析
         try:
