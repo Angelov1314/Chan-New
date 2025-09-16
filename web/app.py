@@ -61,8 +61,15 @@ class ChanWebAnalyzer:
         """下载股票数据"""
         try:
             import pytz
+            from datetime import datetime as dt
+            
+            # 使用美东时区创建日期范围（参考Streamlit最佳实践）
+            tz = pytz.timezone("America/New_York")
+            start_dt = tz.localize(dt.strptime(start_date, '%Y-%m-%d'))
+            end_dt = tz.localize(dt.strptime(end_date, '%Y-%m-%d'))
+            
             ticker = yf.Ticker(symbol)
-            data = yf.download(symbol, start=start_date, end=end_date, interval=timeframe)
+            data = yf.download(symbol, start=start_dt, end=end_dt, interval=timeframe, auto_adjust=True)
             
             if data.empty:
                 # 根据时间框架提供更具体的错误信息
@@ -72,11 +79,12 @@ class ChanWebAnalyzer:
                 else:
                     return None, "无法获取股票数据，请检查股票代码或日期范围"
             
-            # 添加时区处理
+            # 确保数据索引有时区信息
             if not data.empty and hasattr(data.index, 'tz'):
                 if data.index.tz is None:
                     data.index = data.index.tz_localize('UTC')
-                data.index = data.index.tz_convert('US/Eastern')
+                # 转换为美东时区
+                data.index = data.index.tz_convert('America/New_York')
             
             # 数据清理和格式化
             data_clean = data.copy()
