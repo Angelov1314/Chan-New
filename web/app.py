@@ -60,27 +60,8 @@ class ChanWebAnalyzer:
     def download_stock_data(self, symbol, start_date, end_date, timeframe="1d"):
         """下载股票数据"""
         try:
-            import pytz
-            from datetime import datetime as dt
-            
-            # 使用美东时区创建日期范围（参考Streamlit最佳实践）
-            tz = pytz.timezone("America/New_York")
-            start_dt = tz.localize(dt.strptime(start_date, '%Y-%m-%d'))
-            end_dt = tz.localize(dt.strptime(end_date, '%Y-%m-%d'))
-            
-            # 检测是否在Render环境
-            import os
-            is_render = os.environ.get('RENDER', False)
-            
             ticker = yf.Ticker(symbol)
-            # 统一使用字符串日期，避免时区问题
-            import logging
-            logging.getLogger('yfinance').setLevel(logging.CRITICAL)
-            print(f"DEBUG: 下载数据 - 股票: {symbol}, 开始: {start_date}, 结束: {end_date}, 间隔: {timeframe}")
-            data = yf.download(symbol, start=start_date, end=end_date, interval=timeframe, 
-                             auto_adjust=True, progress=False)
-            print(f"DEBUG: yfinance.download返回数据形状: {data.shape}")
-            print(f"DEBUG: 数据列名: {list(data.columns) if not data.empty else 'Empty'}")
+            data = yf.download(symbol, start=start_date, end=end_date, interval=timeframe)
             
             if data.empty:
                 # 根据时间框架提供更具体的错误信息
@@ -89,13 +70,6 @@ class ChanWebAnalyzer:
                     return None, f"无法获取{timeframe}数据。日内数据最多只能获取最近{max_days}天的历史数据，请调整日期范围。"
                 else:
                     return None, "无法获取股票数据，请检查股票代码或日期范围"
-            
-            # 确保数据索引有时区信息
-            if not data.empty and hasattr(data.index, 'tz'):
-                if data.index.tz is None:
-                    data.index = data.index.tz_localize('UTC')
-                # 转换为美东时区
-                data.index = data.index.tz_convert('America/New_York')
             
             # 数据清理和格式化
             data_clean = data.copy()
@@ -116,9 +90,6 @@ class ChanWebAnalyzer:
             return data_clean, None
             
         except Exception as e:
-            print(f"DEBUG: 数据下载异常: {str(e)}")
-            import traceback
-            print(f"DEBUG: 异常堆栈: {traceback.format_exc()}")
             return None, f"数据下载失败: {str(e)}"
     
     def _add_technical_indicators(self, data):
